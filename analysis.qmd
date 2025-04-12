@@ -372,7 +372,7 @@ names(myd_test)
 
 myd_test <- myd_test[,-c(68:75)]
 ```
-CFなくない？？？？？
+CFなくない？？？
 
 
 # test
