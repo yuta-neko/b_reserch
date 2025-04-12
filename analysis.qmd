@@ -41,7 +41,8 @@ knitr:
 #| echo: false
 #| message: false
 pacman::p_load(readxl,
-               tidyverse)
+               tidyverse,
+               stringr)
 ```
 
 データの読み込む
@@ -276,5 +277,130 @@ names(myd_6)
 myd_1はこれでよし
 ```{r}
 myd_1 <- myd_1[,c(23,28,59:66,71,84,86,88,90,174,206:316,331:414,429:460,476:500)]
+```
+
+myd_2もこれでよし
+```{r}
+myd_2 <- myd_2[,c(1:239,254:239,344:444,460:500)]
+```
+
+myd_3
+```{r}
+myd_3 <- myd_3[,c(1:117,132:161,171:196,213:258,274:317,332:356,380:456,471:491)]
+```
+
+myd_4
+```{r}
+myd_4 <- myd_4[,c(123:128,130,132,134,136,138,140:152,167:182,197:284,299:305,320:326,341:351,366:376,391:405,420:434,449:467,482:500)]
+```
+
+myd_5
+```{r}
+myd_5 <- myd_5[,c(9:55,64:78,87:96,105:110,119:153,162:176,185:194,203:235,244:283,292:301,310:323,332:380,389:433,442:495)]
+```
+
+
+myd_6もおっけい
+```{r}
+myd_6 <- myd_6[,c(4:59)]
+```
+
+結合してみよう
+```{r}
+myd_clean <- cbind(myd_1,myd_2,myd_3,myd_4,myd_5,myd_6)
+```
+
+単位が記録された行があったので消した
+```{r}
+vec<- which(grepl("社", myd_clean$連結子会社数))
+myd_clean <- myd_clean[-c(vec),]
+```
+
+余計な列がないか確認
+```{r}
+myd_clean_1 <- myd_clean[,1:1000]
+myd_clean_2 <- myd_clean[,1001:1722]
+```
+
+
+```{r}
+names(myd_clean_1)
+
+myd_clean_1 <- myd_clean_1[,-c(369:382,509:522)]
+```
+
+
+
+```{r}
+names(myd_clean_2)
+```
+
+
+```{r}
+myd <- cbind(myd_clean_1,myd_clean_2)
+```
+
+
+NAが95%を占める列の数を数えよう
+```{r}
+NA_col <- rep(NA,length(myd))
+
+for (i in 1:length(myd)) {
+  NA_col[i] <- sum(is.na(myd[,i])) >= 0.95*ncol(myd)
+}
+
+sum(NA_col == 1)
+```
+
+
+NAが1つもない列数を数えよう
+```{r}
+perf_col <- rep(NA,length(myd))
+
+for (i in 1:length(myd)) {
+  perf_col[i] <- sum(is.na(myd[,i])) == 0
+}
+
+sum(perf_col == 1)
+```
+ふーん，これはおそらく0がNAと記録されている．
+
+これで整形は終わったかな？
+```{r}
+myd_test <- myd[,-c(which(NA_col))]
+names(myd_test)
+
+myd_test <- myd_test[,-c(68:75)]
+```
+CFなくない？？？？？
+
+
+# test
+```{r}
+myd_test <- myd_5
+```
+
+```{r}
+x <- myd_test[,1]
+table(x)
+```
+
+```{r}
+library(dplyr)
+library(purrr)
+
+# 閾値（例えば最頻値が8割以上なら削除対象）
+threshold <- 0.8
+
+# データフレーム df から、情報量の少ない列を除外する
+filtered_df <- df %>%
+  select(
+    where(~ {
+      freq <- table(.x)
+      max_freq <- max(freq, na.rm = TRUE)
+      max_freq / length(na.omit(.x)) < threshold
+    })
+  )
+
 ```
 
