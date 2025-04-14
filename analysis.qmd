@@ -376,31 +376,31 @@ CFなくない？？？
 
 
 # test
-```{r}
-myd_test <- myd_5
-```
-
-```{r}
-x <- myd_test[,1]
-table(x)
-```
-
-```{r}
-library(dplyr)
-library(purrr)
-
-# 閾値（例えば最頻値が8割以上なら削除対象）
-threshold <- 0.8
-
-# データフレーム df から、情報量の少ない列を除外する
-filtered_df <- df %>%
-  select(
-    where(~ {
-      freq <- table(.x)
-      max_freq <- max(freq, na.rm = TRUE)
-      max_freq / length(na.omit(.x)) < threshold
-    })
-  )
-
-```
+# ```{r}
+# myd_test <- myd_5
+# ```
+# 
+# ```{r}
+# x <- myd_test[,1]
+# table(x)
+# ```
+# 
+# ```{r}
+# library(dplyr)
+# library(purrr)
+# 
+# # 閾値（例えば最頻値が8割以上なら削除対象）
+# threshold <- 0.8
+# 
+# # データフレーム df から、情報量の少ない列を除外する
+# filtered_df <- df %>%
+#   select(
+#     where(~ {
+#       freq <- table(.x)
+#       max_freq <- max(freq, na.rm = TRUE)
+#       max_freq / length(na.omit(.x)) < threshold
+#     })
+#   )
+# 
+# ```
 
