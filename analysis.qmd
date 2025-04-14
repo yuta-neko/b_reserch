@@ -346,7 +346,7 @@ NAが95%を占める列の数を数えよう
 NA_col <- rep(NA,length(myd))
 
 for (i in 1:length(myd)) {
-  NA_col[i] <- sum(is.na(myd[,i])) >= 0.95*ncol(myd)
+  NA_col[i] <- sum(is.na(myd[,i])) >= 0.95*nrow(myd)
 }
 
 sum(NA_col == 1)
@@ -372,9 +372,29 @@ names(myd_test)
 
 myd_test <- myd_test[,-c(68:75)]
 ```
-CFなくない？？？
+CFなくない？？？<- タイピングミスで，過剰にカットされていた
 
 
+再度データを落としてきた．これを読み込んで，NAが95%を超える列を消してみよう
+```{r}
+myd_firm <- read_excel("data/firm_data.xlsx")
+
+NA_col <- rep(NA,length(myd_firm))
+
+for (i in 1:length(myd_firm)) {
+  NA_col[i] <- sum(is.na(myd_firm[,i])) >= 0.95*nrow(myd_firm)
+}
+
+sum(NA_col == 1)
+```
+
+
+```{r}
+myd_firm_clean <- myd_firm[,-c(which(NA_col))]
+```
+
+
+```{r}
 # test
 # ```{r}
 # myd_test <- myd_5
@@ -402,5 +422,4 @@ CFなくない？？？
 #     })
 #   )
 # 
-# ```
-
+```
