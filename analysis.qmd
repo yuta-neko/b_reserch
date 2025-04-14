@@ -399,7 +399,7 @@ myd_firm_clean <- myd_firm[,-c(which(NA_col))]
 
 
 
-tとidを付与しよう
+tとidとg_idを付与しよう
 
 
 まずはt
@@ -446,6 +446,12 @@ perfect!
 myd <- myd_firm_clean[,-c(1:4)]
 ```
 データ整形はこれで終わった!
+
+最後に，NAに0を代入しよう
+```{r}
+myd <- myd |> 
+  mutate_all(~ifelse(is.na(.),0,.))
+```
 
 
 
