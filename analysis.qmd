@@ -171,6 +171,14 @@ myd <- myd |>
   ungroup()
 ```
 
+```{r}
+ggplot(data = myd,
+       aes(x = A,
+           y = after_stat(density))) +
+  geom_histogram()
+```
+
+
 データの整形
 ```{r}
 myd_acc <- myd[,473:476]
@@ -213,7 +221,6 @@ ggplot(data = myd,
 summary(myd$u)
 ```
 ```{r}
-
 myd <- myd |> 
   mutate(u = case_when(u ==  Inf ~ 0,
                        u == -Inf ~ 0,
