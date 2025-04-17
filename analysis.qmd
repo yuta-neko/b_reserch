@@ -42,337 +42,11 @@ knitr:
 #| message: false
 pacman::p_load(readxl,
                tidyverse,
-               stringr)
+               stringr,
+               quantreg)
 ```
 
-<!-- データの読み込む -->
-<!-- ```{r} -->
-<!-- myd_0500 <- read_excel("data/水産・農林業.xlsx") -->
-<!-- myd_1050 <- read_excel("data/鉱業.xlsx") -->
-<!-- myd_2050 <- read_excel("data/建設業.xlsx") -->
-<!-- myd_3050 <- read_excel("data/食料品.xlsx") -->
-<!-- myd_3100 <- read_excel("data/繊維.xlsx") -->
-<!-- myd_3150 <- read_excel("data/パルプ・紙.xlsx") -->
-<!-- myd_3200 <- read_excel("data/化学.xlsx") -->
-<!-- myd_3250 <- read_excel("data/医薬品.xlsx") -->
-<!-- myd_3300 <- read_excel("data/石油・石炭製品.xlsx") -->
-<!-- myd_3350 <- read_excel("data/ゴム製品.xlsx") -->
-<!-- myd_3400 <- read_excel("data/ガラス・土石製品.xlsx") -->
-<!-- myd_3450 <- read_excel("data/鉄鋼.xlsx") -->
-<!-- myd_3500 <- read_excel("data/非鉄金属.xlsx") -->
-<!-- myd_3550 <- read_excel("data/金属製品.xlsx") -->
-<!-- myd_3600 <- read_excel("data/機械.xlsx") -->
-<!-- myd_3650 <- read_excel("data/電気機器.xlsx") -->
-<!-- myd_3700 <- read_excel("data/輸送用機器.xlsx") -->
-<!-- myd_3750 <- read_excel("data/精密機器.xlsx") -->
-<!-- myd_3800 <- read_excel("data/その他製品.xlsx") -->
-<!-- myd_4050 <- read_excel("data/電気・ガス業.xlsx") -->
-<!-- myd_5050 <- read_excel("data/陸運業.xlsx") -->
-<!-- myd_5100 <- read_excel("data/海運業.xlsx") -->
-<!-- myd_5150 <- read_excel("data/空運業.xlsx") -->
-<!-- myd_5200 <- read_excel("data/倉庫・運輸関連業.xlsx") -->
-<!-- myd_5250 <- read_excel("data/情報・通信業.xlsx") -->
-<!-- myd_5250_fi <- read_excel("data/情報・通信業_会社情報.xlsx") -->
-<!-- myd_6050 <- read_excel("data/卸売業.xlsx") -->
-<!-- myd_6100 <- read_excel("data/小売業.xlsx") -->
-<!-- myd_6100_fi <- read_excel("data/小売業_会社情報.xlsx") -->
-<!-- myd_8050 <- read_excel("data/不動産業.xlsx") -->
-<!-- myd_9050 <- read_excel("data/サービス業.xlsx") -->
-<!-- myd_9050_fi <- read_excel("data/サービス業_会社情報.xlsx") -->
-<!-- ``` -->
 
-<!-- データ整形をする -->
-
-<!-- _fiの列を入れ替える -->
-<!-- ```{r} -->
-<!-- myd_5250_fi <- dplyr::select(myd_5250_fi,"...1", "...2", "...3", "持株会社フラグ", everything()) -->
-<!-- myd_6100_fi <- dplyr::select(myd_6100_fi,"...1", "...2", "...3", "持株会社フラグ", everything()) -->
-<!-- myd_9050_fi <- dplyr::select(myd_9050_fi,"...1", "...2", "...3", "持株会社フラグ", everything()) -->
-<!-- ``` -->
-<!-- _fiに対応するデータの1から3列目を消す -->
-<!-- ```{r} -->
-<!-- myd_5250 <- dplyr::select(myd_5250,-one_of("...1", "...2", "...3")) -->
-<!-- myd_6100 <- dplyr::select(myd_6100,-one_of("...1", "...2", "...3")) -->
-<!-- myd_9050 <- dplyr::select(myd_9050,-one_of("...1", "...2", "...3")) -->
-<!-- ``` -->
-<!-- 今整形したデータを結合しよう -->
-<!-- ```{r} -->
-<!-- myd_5250 <- cbind(myd_5250_fi, myd_5250) -->
-<!-- myd_6100 <- cbind(myd_6100_fi, myd_6100) -->
-<!-- myd_9050 <- cbind(myd_9050_fi, myd_9050) -->
-<!-- ``` -->
-
-
-<!-- 各業種ごとのデータがあるので，どのデータにどの業種の変数が記録されているのか識別できるような列を追加する -->
-<!-- ```{r} -->
-<!-- g_id <- rep(0500,nrow(myd_0500)) -->
-<!-- myd_0500 <- cbind(myd_0500,g_id) -->
-
-<!-- g_id <- rep(1500,nrow(myd_1050)) -->
-<!-- myd_1050<- cbind(myd_1050,g_id) -->
-
-<!-- g_id <- rep(2500,nrow(myd_2050)) -->
-<!-- myd_2050<- cbind(myd_2050,g_id) -->
-
-<!-- g_id <- rep(3500,nrow(myd_3050)) -->
-<!-- myd_3050<- cbind(myd_3050,g_id) -->
-
-<!-- g_id <- rep(3100,nrow(myd_3100)) -->
-<!-- myd_3100<- cbind(myd_3100,g_id) -->
-
-<!-- g_id <- rep(3150,nrow(myd_3150)) -->
-<!-- myd_3150<- cbind(myd_3150,g_id) -->
-
-<!-- g_id <- rep(3200,nrow(myd_3200)) -->
-<!-- myd_3200<- cbind(myd_3200,g_id) -->
-
-<!-- g_id <- rep(3250,nrow(myd_3250)) -->
-<!-- myd_3250<- cbind(myd_3250,g_id) -->
-
-<!-- g_id <- rep(3300,nrow(myd_3300)) -->
-<!-- myd_3300<- cbind(myd_3300,g_id) -->
-
-<!-- g_id <- rep(3350,nrow(myd_3350)) -->
-<!-- myd_3350<- cbind(myd_3350,g_id) -->
-
-<!-- g_id <- rep(3400,nrow(myd_3400)) -->
-<!-- myd_3400<- cbind(myd_3400,g_id) -->
-
-<!-- g_id <- rep(3450,nrow(myd_3450)) -->
-<!-- myd_3450<- cbind(myd_3450,g_id) -->
-
-<!-- g_id <- rep(3500,nrow(myd_3500)) -->
-<!-- myd_3500<- cbind(myd_3500,g_id) -->
-
-<!-- g_id <- rep(3550,nrow(myd_3550)) -->
-<!-- myd_3550<- cbind(myd_3550,g_id) -->
-
-<!-- g_id <- rep(3600,nrow(myd_3600)) -->
-<!-- myd_3600<- cbind(myd_3600,g_id) -->
-
-<!-- g_id <- rep(3650,nrow(myd_3650)) -->
-<!-- myd_3650<- cbind(myd_3650,g_id) -->
-
-<!-- g_id <- rep(3700,nrow(myd_3700)) -->
-<!-- myd_3700<- cbind(myd_3700,g_id) -->
-
-<!-- g_id <- rep(3750,nrow(myd_3750)) -->
-<!-- myd_3750<- cbind(myd_3750,g_id) -->
-
-<!-- g_id <- rep(3800,nrow(myd_3800)) -->
-<!-- myd_3800<- cbind(myd_3800,g_id) -->
-
-<!-- g_id <- rep(4050,nrow(myd_4050)) -->
-<!-- myd_4050<- cbind(myd_4050,g_id) -->
-
-<!-- g_id <- rep(5050,nrow(myd_5050)) -->
-<!-- myd_5050<- cbind(myd_5050,g_id) -->
-
-<!-- g_id <- rep(5100,nrow(myd_5100)) -->
-<!-- myd_5100<- cbind(myd_5100,g_id) -->
-
-<!-- g_id <- rep(5150,nrow(myd_5150)) -->
-<!-- myd_5150<- cbind(myd_5150,g_id) -->
-
-<!-- g_id <- rep(5200,nrow(myd_5200)) -->
-<!-- myd_5200<- cbind(myd_5200,g_id) -->
-
-<!-- g_id <- rep(5250,nrow(myd_5250)) -->
-<!-- myd_5250<- cbind(myd_5250,g_id) -->
-
-<!-- g_id <- rep(6050,nrow(myd_6050)) -->
-<!-- myd_6050<- cbind(myd_6050,g_id) -->
-
-<!-- g_id <- rep(6100,nrow(myd_6100)) -->
-<!-- myd_6100<- cbind(myd_6100,g_id) -->
-
-<!-- g_id <- rep(8050,nrow(myd_8050)) -->
-<!-- myd_8050<- cbind(myd_8050,g_id) -->
-
-<!-- g_id <- rep(9050,nrow(myd_9050)) -->
-<!-- myd_9050<- cbind(myd_9050,g_id) -->
-<!-- ``` -->
-
-
-<!-- 一旦全部結合してmydとしよう -->
-<!-- ```{r} -->
-<!-- myd <- rbind(myd_0500,myd_1050 ,myd_2050 ,myd_3050 ,myd_3100 ,myd_3150 ,myd_3200 ,myd_3250 ,myd_3300 ,myd_3350 ,myd_3400 ,myd_3450 ,myd_3500 ,myd_3550 ,myd_3600 ,myd_3650 ,myd_3700 ,myd_3750 ,myd_3800 ,myd_4050 ,myd_5050,myd_5100,myd_5150,myd_5200,myd_5250,myd_6050,myd_6100,myd_8050,myd_9050) -->
-<!-- ``` -->
-
-<!-- 同名の観測個体に同名のidを付与したい -->
-<!-- ```{r} -->
-<!-- myd <- myd |>  -->
-<!--   mutate(id = as.integer(factor(...2))) -->
-<!-- ``` -->
-<!-- 観測期間に数字を割り当てたい -->
-<!-- ```{r} -->
-<!-- myd <- myd |>  -->
-<!--   mutate(t = case_when(...3 == "P" ~ 20, -->
-<!--                        ...3 == "P-1" ~ 19, -->
-<!--                        ...3 == "P-2" ~ 18, -->
-<!--                        ...3 == "P-3" ~ 17, -->
-<!--                        ...3 == "P-4" ~ 16, -->
-<!--                        ...3 == "P-5" ~ 15, -->
-<!--                        ...3 == "P-6" ~ 14, -->
-<!--                        ...3 == "P-7" ~ 13, -->
-<!--                        ...3 == "P-8" ~ 12, -->
-<!--                        ...3 == "P-9" ~ 11, -->
-<!--                        ...3 == "P-10" ~ 10, -->
-<!--                        ...3 == "P-11" ~ 9, -->
-<!--                        ...3 == "P-12" ~ 8, -->
-<!--                        ...3 == "P-13" ~ 7, -->
-<!--                        ...3 == "P-14" ~ 6, -->
-<!--                        ...3 == "P-15" ~ 5, -->
-<!--                        ...3 == "P-16" ~ 4, -->
-<!--                        ...3 == "P-17" ~ 3, -->
-<!--                        ...3 == "P-18" ~ 2, -->
-<!--                        ...3 == "P-19" ~ 1)) -->
-<!-- ``` -->
-
-
-<!-- 一旦mydを500ずつで分割する -->
-
-<!-- ```{r} -->
-<!-- myd_1 <- myd[,1:500] -->
-<!-- myd_2 <- myd[,501:1000] -->
-<!-- myd_3 <- myd[,1001:1500] -->
-<!-- myd_4 <- myd[,1501:2000] -->
-<!-- myd_5 <- myd[,2001:2500] -->
-<!-- myd_6 <- myd[,2501:2559] -->
-<!-- ``` -->
-
-<!-- 以下は変数一覧である．これを元に，明らかにいらない変数を除外しよう． -->
-<!-- ```{r} -->
-<!-- names(myd_1) -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- names(myd_2) -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- names(myd_3) -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- names(myd_4) -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- names(myd_5) -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- names(myd_6) -->
-<!-- ``` -->
-
-
-
-
-<!-- myd_1はこれでよし -->
-<!-- ```{r} -->
-<!-- myd_1 <- myd_1[,c(23,28,59:66,71,84,86,88,90,174,206:316,331:414,429:460,476:500)] -->
-<!-- ``` -->
-
-<!-- myd_2もこれでよし -->
-<!-- ```{r} -->
-<!-- myd_2 <- myd_2[,c(1:239,254:239,344:444,460:500)] -->
-<!-- ``` -->
-
-<!-- myd_3 -->
-<!-- ```{r} -->
-<!-- myd_3 <- myd_3[,c(1:117,132:161,171:196,213:258,274:317,332:356,380:456,471:491)] -->
-<!-- ``` -->
-
-<!-- myd_4 -->
-<!-- ```{r} -->
-<!-- myd_4 <- myd_4[,c(123:128,130,132,134,136,138,140:152,167:182,197:284,299:305,320:326,341:351,366:376,391:405,420:434,449:467,482:500)] -->
-<!-- ``` -->
-
-<!-- myd_5 -->
-<!-- ```{r} -->
-<!-- myd_5 <- myd_5[,c(9:55,64:78,87:96,105:110,119:153,162:176,185:194,203:235,244:283,292:301,310:323,332:380,389:433,442:495)] -->
-<!-- ``` -->
-
-
-<!-- myd_6もおっけい -->
-<!-- ```{r} -->
-<!-- myd_6 <- myd_6[,c(4:59)] -->
-<!-- ``` -->
-
-<!-- 結合してみよう -->
-<!-- ```{r} -->
-<!-- myd_clean <- cbind(myd_1,myd_2,myd_3,myd_4,myd_5,myd_6) -->
-<!-- ``` -->
-
-<!-- 単位が記録された行があったので消した -->
-<!-- ```{r} -->
-<!-- vec<- which(grepl("社", myd_clean$連結子会社数)) -->
-<!-- myd_clean <- myd_clean[-c(vec),] -->
-<!-- ``` -->
-
-<!-- 余計な列がないか確認 -->
-<!-- ```{r} -->
-<!-- myd_clean_1 <- myd_clean[,1:1000] -->
-<!-- myd_clean_2 <- myd_clean[,1001:1722] -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- names(myd_clean_1) -->
-
-<!-- myd_clean_1 <- myd_clean_1[,-c(369:382,509:522)] -->
-<!-- ``` -->
-
-
-
-<!-- ```{r} -->
-<!-- names(myd_clean_2) -->
-<!-- ``` -->
-
-
-<!-- ```{r} -->
-<!-- myd <- cbind(myd_clean_1,myd_clean_2) -->
-<!-- ``` -->
-
-
-<!-- NAが95%を占める列の数を数えよう -->
-<!-- ```{r} -->
-<!-- NA_col <- rep(NA,length(myd)) -->
-
-<!-- for (i in 1:length(myd)) { -->
-<!--   NA_col[i] <- sum(is.na(myd[,i])) >= 0.95*nrow(myd) -->
-<!-- } -->
-
-<!-- sum(NA_col == 1) -->
-<!-- ``` -->
-
-
-<!-- NAが1つもない列数を数えよう -->
-<!-- ```{r} -->
-<!-- perf_col <- rep(NA,length(myd)) -->
-
-<!-- for (i in 1:length(myd)) { -->
-<!--   perf_col[i] <- sum(is.na(myd[,i])) == 0 -->
-<!-- } -->
-
-<!-- sum(perf_col == 1) -->
-<!-- ``` -->
-<!-- ふーん，これはおそらく0がNAと記録されている． -->
-
-<!-- これで整形は終わったかな？ -->
-<!-- ```{r} -->
-<!-- myd_test <- myd[,-c(which(NA_col))] -->
-<!-- names(myd_test) -->
-
-<!-- myd_test <- myd_test[,-c(68:75)] -->
-<!-- ``` -->
-CFなくない？？？<- タイピングミスで，過剰にカットされていた
 
 
 再度データを落としてきた．これを読み込んで，NAが95%を超える列を消してみよう
@@ -453,40 +127,173 @@ myd <- myd |>
   mutate_all(~ifelse(is.na(.),0,.))
 ```
 
+単位が記録されている行を分離
+```{r}
+myd_unit <- myd[1,]
+myd <- myd[-1,]
+```
 
+chaをnumeに変換したい
+```{r}
+myd[] <- lapply(myd, as.numeric)
+```
 
 いよいよ裁量会計発生高の推定といこう
+
+修正ジョーンズモデルを利用する
+
+まずは必要な変数を作ろう
 ```{r}
-#またいつかやる
+#会計発生高
+#有形固定資産
+myd <- myd |> 
+  mutate(ACC = `当期純利益（連結）［累計］` - `営業活動によるキャッシュフロー`,
+         PPE = `有形固定資産`)
+
+#売上変化
+#流動負債変化
+myd <- myd |> 
+  group_by(id) |> 
+  arrange(t, .by_group = T) |> 
+  mutate(delt_S   = `売上高・営業収益［累計］` - lag(`売上高・営業収益［累計］`),
+         delt_REC = `流動負債` - lag(`流動負債`),
+         A = lag(`資産合計`)) |> 
+  ungroup()
+
+#スケーリング
+myd <- myd |> 
+  group_by(id) |> 
+  arrange(t, .by_group = T) |> 
+  mutate(y = ACC / A,
+         x_0 = 1/A,
+         x_1 = (delt_S - delt_REC)/A,
+         x_2 = PPE / A) |> 
+  ungroup()
+```
+
+データの整形
+```{r}
+myd_acc <- myd[,473:476]
+myd_acc <- na.omit(myd_acc)
+myd_acc <- myd_acc |> 
+  mutate(x_0 = case_when(x_0 ==  Inf ~ 0,
+                         x_0 == -Inf ~ 0,
+                         x_0 ==  x_0 ~ x_0),
+         x_1 = case_when(x_1 ==  Inf ~ 0,
+                         x_1 == -Inf ~ 0,
+                         x_1 ==  x_1 ~ x_1),
+         x_2 = case_when(x_2 ==  Inf ~ 0,
+                         x_2 == -Inf ~ 0,
+                         x_2 ==  x_2 ~ x_2),
+         y = case_when(y ==  Inf ~ 0,
+                       y == -Inf ~ 0,
+                       y ==  y   ~ y))
+```
+
+以下をベイズで実装し直そう．
+```{r}
+lm(y ~ 0 + x_0 + x_1 + x_2, data = myd_acc)
 ```
 
 
 ```{r}
-# test
-# ```{r}
-# myd_test <- myd_5
-# ```
-# 
-# ```{r}
-# x <- myd_test[,1]
-# table(x)
-# ```
-# 
-# ```{r}
-# library(dplyr)
-# library(purrr)
-# 
-# # 閾値（例えば最頻値が8割以上なら削除対象）
-# threshold <- 0.8
-# 
-# # データフレーム df から、情報量の少ない列を除外する
-# filtered_df <- df %>%
-#   select(
-#     where(~ {
-#       freq <- table(.x)
-#       max_freq <- max(freq, na.rm = TRUE)
-#       max_freq / length(na.omit(.x)) < threshold
-#     })
-#   )
-# 
+myd <- myd |> 
+  mutate(u = y - (-20.30710*x_0 + -0.02879*x_1 + -0.05337*x_2))
 ```
+
+
+```{r}
+ggplot(data = myd,
+       aes(x = u,
+           y = after_stat(density)))+
+  geom_density()
+```
+
+```{r}
+summary(myd$u)
+```
+```{r}
+
+myd <- myd |> 
+  mutate(u = case_when(u ==  Inf ~ 0,
+                       u == -Inf ~ 0,
+                       u ==  u ~ u))
+```
+
+```{r}
+myd <- myd |> 
+  mutate(u_nor =  (u - mean(u, na.rm = T))/sd(u, na.rm = T))
+```
+
+
+一旦ここで可視化してみよう
+```{r}
+ggplot(data = myd,
+       aes(x = u_nor,
+           y = after_stat(density)))+
+  geom_density()
+```
+
+```{r}
+myd <- myd |> 
+  mutate(z = case_when(u_nor >=  1.96 ~  1,
+                       u_nor <= -1.96 ~ -1))
+```
+
+
+```{r}
+ggplot(data = myd,
+      aes(x = z,
+          y = after_stat(count)))+
+  geom_bar()
+```
+
+
+これ，100万円単位で記録されている切断データやんけ
+
+分位点回帰せなあかんのでは？？？
+
+```{r}
+lm(y ~ 0 + x_0 + x_1 + x_2, data = myd_acc)
+#分位点回帰をしてみる
+rq(y ~ 0 + x_0 + x_1 + x_2, data = myd_acc)
+```
+明らかに定数項が違う
+
+残差の計算
+```{r}
+myd <- myd |> 
+  mutate(u_q = y - (-32.51052070*x_0 + -0.01224305*x_1 + -0.07766466*x_2))
+```
+
+残差の整理
+```{r}
+myd <- myd |> 
+  mutate(u_q = case_when(u_q ==  Inf ~ 0,
+                         u_q == -Inf ~ 0,
+                         u_q ==  u_q ~ u_q))
+```
+
+残差の標準化
+```{r}
+myd <- myd |> 
+  mutate(u_nor_q =  (u_q - mean(u_q, na.rm = T))/sd(u_q, na.rm = T))
+```
+
+
+外れ値の計算と可視化
+```{r}
+myd <- myd |> 
+  mutate(z_q = case_when(u_nor_q >=  1.96 ~  1,
+                         u_nor_q <= -1.96 ~ -1))
+```
+
+
+```{r}
+ggplot(data = myd,
+      aes(x = z_q,
+          y = after_stat(count))) +
+  geom_bar()
+```
+
+
