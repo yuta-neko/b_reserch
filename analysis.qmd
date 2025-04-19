@@ -47,7 +47,9 @@ pacman::p_load(readxl,
 ```
 
 
+# データの読み込み
 
+## NAが95％越えをカット
 
 再度データを落としてきた．これを読み込んで，NAが95%を超える列を消してみよう
 ```{r}
@@ -71,7 +73,7 @@ myd_firm_clean <- myd_firm[,-c(which(NA_col))]
 
 
 
-
+## id
 
 tとidとg_idを付与しよう
 
@@ -115,6 +117,8 @@ myd_firm_clean <- myd_firm_clean |>
 ```
 perfect!
 
+## 細かい整形
+
 では，明らかにいらない最初の4行を消そう
 ```{r}
 myd <- myd_firm_clean[,-c(1:4)]
@@ -138,9 +142,13 @@ chaをnumeに変換したい
 myd[] <- lapply(myd, as.numeric)
 ```
 
+# 処置変数の推定
+
 いよいよ裁量会計発生高の推定といこう
 
 修正ジョーンズモデルを利用する
+
+## 変数定義
 
 まずは必要な変数を作ろう
 ```{r}
@@ -170,6 +178,10 @@ myd <- myd |>
          x_2 = PPE / A) |> 
   ungroup()
 ```
+このスケーリングやめる？線形性があるので，特に意味はないはず．<-資産が0なのは未発見．
+
+ACCが0というのは，100万未満のデータが売り切られているので，1を代入するのは？<- quantile regで対処はできているはず．
+
 
 ```{r}
 ggplot(data = myd,
@@ -178,6 +190,7 @@ ggplot(data = myd,
   geom_histogram()
 ```
 
+## Infの処理
 
 データの整形
 ```{r}
@@ -197,6 +210,8 @@ myd_acc <- myd_acc |>
                        y == -Inf ~ 0,
                        y ==  y   ~ y))
 ```
+
+## 回帰
 
 以下をベイズで実装し直そう．
 ```{r}
@@ -240,6 +255,7 @@ ggplot(data = myd,
            y = after_stat(density)))+
   geom_density()
 ```
+## 連続を01に変換
 
 ```{r}
 myd <- myd |> 
@@ -255,8 +271,9 @@ ggplot(data = myd,
   geom_bar()
 ```
 
+# 分位点回帰
 
-これ，100万円単位で記録されている切断データやんけ
+これ，100万円単位で記録されている打ち切りデータやんけ
 
 分位点回帰せなあかんのでは？？？
 
@@ -302,5 +319,42 @@ ggplot(data = myd,
           y = after_stat(count))) +
   geom_bar()
 ```
+## アンスケール分位点回帰
 
+
+```{r}
+#アンスケーリング
+myd <- myd |> 
+  group_by(id) |> 
+  arrange(t, .by_group = T) |> 
+  mutate(y_q = ACC,
+         x_1_q = (delt_S - delt_REC),
+         x_2_q = PPE) |> 
+  ungroup()
+```
+
+
+
+```{r}
+#分位点回帰をしてみる
+rq(y_q ~ x_1_q + x_2_q, data = myd)
+```
+
+残差の計算
+```{r}
+myd <- myd |> 
+  mutate(u_q_unsc = y_q - (-1.358538e+02 -7.427515e-03*x_1_q - 7.108090e-02*x_2_q))
+```
+Infはなくなったね！
+
+可視化してみる
+```{r}
+ggplot(data = myd,
+      aes(x = u_q_unsc,
+          y = after_stat(density))) +
+  geom_density()
+```
+ラグをとっているので，tをひとつカットしよう
+
+# 一般化傾向スコア
 
